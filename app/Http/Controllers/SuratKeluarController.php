@@ -24,14 +24,14 @@ class SuratKeluarController extends Controller
                                    ->get();
             } elseif ($user->level_user == 'kepala_arsip') {
                 // Menampilkan surat keluar berdasarkan status_arsip saja
-                $data = SuratKeluar::whereIn('status_arsip', ['Pending', 'Revisi'])
+                $data = SuratKeluar::whereIn('status_arsip', ['Pending', 'Revisi',])
                                    ->orderBy('id_surat_keluar', 'ASC')
                                    ->get();
             } elseif ($user->level_user == 'direktur') {
-                $data = SuratKeluar::where('status_divisi', 'Approved')
-                                   ->where('status_direktur', 'Pending')
-                                   ->orderBy('id_surat_keluar', 'ASC')
-                                   ->get();
+                  $data = SuratKeluar::where('status_divisi', 'Approved')
+                               ->where('status_arsip', 'Pending')
+                               ->orderBy('id_surat_keluar', 'ASC')
+                               ->get();
             } else {
                 $data = SuratKeluar::orderBy('id_surat_keluar', 'ASC')->get();
             }
@@ -64,7 +64,7 @@ class SuratKeluarController extends Controller
                         case 'Approved':
                             $class = 'bg-label-success';
                             break;
-                        case 'Rejected':
+                        case 'Reject':
                             $class = 'bg-label-danger';
                             break;
                         default: // Pending
@@ -77,15 +77,17 @@ class SuratKeluarController extends Controller
                ->addColumn('action', function ($row) use ($user) {
                     // 1. Admin devisi → Detail / Edit / Delete
                     if ($user->level_user === 'admin_devisi') {
-                        return '
+                        // Tentukan apakah boleh edit/delete (Pending atau Revisi)
+                        $canModify = in_array($row->status_divisi, ['Pending', 'Revisi']);
+
+                        if ($canModify) {
+                            // Tampilkan Detail, Edit, Delete
+                            return '
                             <div class="dropdown">
                                 <button class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
                                     <i class="ri-more-2-line"></i>
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="javascript:void(0);" onclick="detailSuratKeluar('.$row->id_surat_keluar.')">
-                                        <i class="ri-zoom-in-line"></i> Detail
-                                    </a>
                                     <a class="dropdown-item" href="javascript:void(0);" onclick="editForm('.$row->id_surat_keluar.')">
                                         <i class="ri-pencil-line me-1"></i> Edit
                                     </a>
@@ -94,6 +96,13 @@ class SuratKeluarController extends Controller
                                     </a>
                                 </div>
                             </div>';
+                        } else {
+                            // Hanya tampilkan Detail (Approved atau Rejected)
+                            return '
+                            <a class="btn btn-sm btn-info" href="javascript:void(0);" onclick="detailSuratKeluar('.$row->id_surat_keluar.')">
+                                <i class="ri-zoom-in-line"></i> Detail
+                            </a>';
+                        }
                     }
 
                     // 2. Kepala Arsip → tombol khusus cekKepalaArsip()
@@ -205,6 +214,98 @@ class SuratKeluarController extends Controller
 //         ]);
 //     }
 // }
+     public function suratMasuk(Request $request)
+{
+    $user = Auth::user();
+
+    if ($request->ajax()) {
+        // Logika filter berdasarkan peran pengguna
+        
+        $query = SuratKeluar::with('user')
+        ->where('status_arsip', 'Approved');
+                // Tambahkan filter tanggal jika parameter ada
+        if ($request->has('dari_tanggal') && $request->has('sampai_tanggal')) {
+            $dari_tanggal = $request->input('dari_tanggal');
+            $sampai_tanggal = $request->input('sampai_tanggal');
+            $query->whereBetween('tanggal_surat', [$dari_tanggal, $sampai_tanggal]);
+        }
+
+        $data = $query->orderBy('id_surat_keluar', 'ASC')->get();
+        return DataTables::of($data)
+            ->addIndexColumn()
+            // Tanggal diterima dari tanggal_surat
+            ->addColumn('tanggal_diterima', function ($row) {
+                return $row->tanggal_surat;
+            })
+            // Nomor surat
+            ->addColumn('nomor_surat', function ($row) {
+                return $row->nomor_surat;
+            })
+            // Pengirim dari kolom tujuan
+            ->addColumn('pengirim', function ($row) {
+                return $row->tujuan;
+            })
+            // Perihal
+            ->addColumn('perihal', function ($row) {
+                return $row->perihal;
+            })
+            // Penerima dari relasi user
+            ->addColumn('penerima', function ($row) {
+                return optional($row->user)->name ?? '-';
+            })
+            // Status dengan prioritas direktur > arsip > divisi
+            ->addColumn('status', function ($row) {
+                if ($row->status_direktur !== 'Pending') {
+                    $status = $row->status_direktur;
+                } elseif ($row->status_arsip !== 'Pending') {
+                    $status = $row->status_arsip;
+                } else {
+                    $status = $row->status_divisi;
+                }
+
+                switch ($status) {
+                    case 'Revisi':
+                        $class = 'bg-label-warning';
+                        break;
+                    case 'Approved':
+                        $class = 'bg-label-success';
+                        break;
+                    case 'Reject':
+                        $class = 'bg-label-danger';
+                        break;
+                    default: // Pending
+                        $class = 'bg-label-info';
+                }
+
+                return "<span class=\"badge rounded-pill {$class}\">{$status}</span>";
+            })
+            // Kolom aksi berdasarkan peran pengguna
+            ->addColumn('action', function($row) {
+                    return '
+                        <button
+                            class="btn btn-sm btn-primary"
+                            onclick="cetakSuratMasuk('. $row->id_surat_keluar .')"
+                        >
+                            <i class="fa fa-print"></i> Cetak
+                        </button>
+                    ';
+                })
+            ->rawColumns(['status', 'action'])
+            ->make(true);
+    }
+
+    return view('surat_masuk.main')->with('data');
+}
+
+public function cetakSuratMasuk($id)
+    {
+        // 1. Ambil data surat, atau 404 jika tidak ketemu
+        $surat = SuratKeluar::with('user')->findOrFail($id);
+
+        // 2a. Kalau mau tampilkan langsung view HTML-nya:
+        return view('surat_masuk.cetak_per_surat', compact('surat'));
+    }
+
 
         public function store(Request $request)
     {
@@ -289,6 +390,10 @@ class SuratKeluarController extends Controller
                     $data->status_direktur = 'Revisi';
                     $data->status_arsip = 'Revisi';
                     $data->status_divisi = 'Revisi';
+                } elseif ($request->tindakan == 'Reject') {
+                    $data->status_direktur = 'Reject';
+                    $data->status_arsip = 'Reject';
+                    $data->status_divisi = 'Reject';
                 }
                 $data->catatan_direktur = $request->catatan_direktur; // Tambahkan catatan_direktur
             }
@@ -320,7 +425,19 @@ class SuratKeluarController extends Controller
             return ['status' => 'success', 'content' => $e->getMessage()];
         }
     }
-
+     public function detailSuratKeluar(Request $request)
+    {
+        try {
+            $data['jenis'] = JenisSurat::all();
+            $data['data']  = $request->id
+            ? SuratKeluar::with('jenisSurat')->find($request->id)
+            : null;
+            $content = view('surat_keluar.show', $data)->render();
+            return ['status' => 'success', 'content' => $content];
+        } catch (\Exception $e) {
+            return ['status' => 'success', 'content' => $e->getMessage()];
+        }
+    }
     public function cekKepalaArsip(Request $request)
     {
         try {
@@ -345,6 +462,100 @@ class SuratKeluarController extends Controller
     }
     public function laporan(Request $request)
     {
+        $user = Auth::user();
+
+        // Hanya Kepala Arsip yang boleh akses halaman ini
+        if ($user->level_user !== 'kepala_arsip') {
+            abort(403);
+        }
+
+        if ($request->ajax()) {
+            $query = SuratKeluar::where('status_arsip', 'Approved');
+
+            // Filter tanggal jika ada
+            if ($request->has('dari_tanggal') && $request->has('sampai_tanggal')) {
+                $query->whereBetween('tanggal_surat', [
+                    $request->input('dari_tanggal'),
+                    $request->input('sampai_tanggal'),
+                ]);
+            }
+
+            $data = $query->orderBy('id_surat_keluar', 'ASC')->get();
+
+            return DataTables::of($data)
+                ->addIndexColumn()
+                // Tambah kolom aksi
+                ->addColumn('aksi', function($row) {
+                    return '
+                        <button
+                            class="btn btn-sm btn-primary"
+                            onclick="cetakSuratKeluar('. $row->id_surat_keluar .')"
+                        >
+                            <i class="fa fa-print"></i> Cetak
+                        </button>
+                    ';
+                })
+                ->rawColumns(['aksi']) // agar HTML button dirender
+                ->make(true);
+        }
+
+        return view('surat_keluar.laporan')->with('data');
+    }
+
+     public function cetakSuratKeluar($id)
+    {
+        // 1. Ambil data surat, atau 404 jika tidak ketemu
+        $surat = SuratKeluar::findOrFail($id);
+
+        // 2a. Kalau mau tampilkan langsung view HTML-nya:
+        return view('surat_keluar.cetak_per_surat', compact('surat'));
+    }
+
+    public function cetakLaporan(Request $request)
+{
+    $user = Auth::user();
+
+    // Hanya Kepala Arsip yang boleh akses
+    if ($user->level_user !== 'kepala_arsip') {
+        abort(403);
+    }
+
+    $query = SuratKeluar::where('status_arsip', 'Approved');
+
+    // Tambahkan filter tanggal jika parameter ada
+    if ($request->has('dari_tanggal') && $request->has('sampai_tanggal')) {
+        $dari_tanggal = $request->input('dari_tanggal');
+        $sampai_tanggal = $request->input('sampai_tanggal');
+        $query->whereBetween('tanggal_surat', [$dari_tanggal, $sampai_tanggal]);
+    }
+
+    $data = $query->orderBy('id_surat_keluar', 'ASC')->get();
+
+    // Kembalikan view untuk cetak atau generate PDF
+    return view('surat_keluar.cetak', compact('data'));
+}
+    public function cetakLaporanSuratMasuk(Request $request)
+{
+    $user = Auth::user();
+
+    
+      $query = SuratKeluar::with('user')
+        ->where('status_arsip', 'Approved');
+
+    // Tambahkan filter tanggal jika parameter ada
+    if ($request->has('dari_tanggal') && $request->has('sampai_tanggal')) {
+        $dari_tanggal = $request->input('dari_tanggal');
+        $sampai_tanggal = $request->input('sampai_tanggal');
+        $query->whereBetween('tanggal_surat', [$dari_tanggal, $sampai_tanggal]);
+    }
+
+    $data = $query->orderBy('id_surat_keluar', 'ASC')->get();
+
+    // Kembalikan view untuk cetak atau generate PDF
+    return view('surat_masuk.cetak', compact('data'));
+}
+    public function suratDisimpan(Request $request)
+    {
          $user = Auth::user();
 
         // Hanya Kepala Arsip yang boleh akses halaman ini
@@ -353,7 +564,7 @@ class SuratKeluarController extends Controller
         }
 
         if ($request->ajax()) {
-            $data = SuratKeluar::where('status_arsip', 'Approved')
+            $data = SuratKeluar::whereIn('status_direktur', ['Approved', 'Reject',])
                             ->orderBy('id_surat_keluar', 'ASC')
                             ->get();
 
@@ -387,7 +598,7 @@ class SuratKeluarController extends Controller
                         case 'Approved':
                             $class = 'bg-label-success';
                             break;
-                        case 'Rejected':
+                        case 'Reject':
                             $class = 'bg-label-danger';
                             break;
                         default: // Pending
@@ -397,26 +608,10 @@ class SuratKeluarController extends Controller
                     // Kembalikan badge sesuai role dan database
                     return "<span class=\"badge rounded-pill {$class}\">{$status}</span>";
                 })
-                 ->addColumn('action', function ($row) {
-                    $btn = '<div class="dropdown">
-                        <button type="button" class="btn p-0 dropdown-toggle hide-arrow " data-bs-toggle="dropdown" aria-expanded="true">
-                            <i class="ri-more-2-line"></i>
-                        </button>
-                        <div class="dropdown-menu " data-popper-placement="bottom-end">
-                        <a class="dropdown-item waves-effect" href="javascript:void(0);" onclick="detailLaporan(' . $row->id_surat_keluar . ')">
-                            <i class="ri-zoom-in-line"></i> Detail
-                        </a>
-                          <a class="dropdown-item waves-effect" href="javascript:void(0);" onclick="cetakLaporan(' . $row->id_surat_keluar . ')">
-                            <i class="ri-pencil-line me-1"></i> Cetak
-                        </a>
-                        </div>
-                    </div>';
-                    return $btn;
-                })
-                ->rawColumns(['action','status'])
+                ->rawColumns(['status'])
                 ->make(true);
         }
 
-        return view('surat_keluar.laporan')->with('data'); 
+        return view('surat_keluar.surat_disimpan')->with('data'); 
     }
 }

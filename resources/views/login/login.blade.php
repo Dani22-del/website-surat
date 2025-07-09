@@ -18,7 +18,7 @@
       <div class="card p-md-7 p-1" style="width: 45%;margin-left:250px;">
         <!-- Logo -->
         <div class="app-brand justify-content-center mt-5">
-          <a href="index.html" class="app-brand-link gap-2">
+          <a href="" class="app-brand-link gap-2">
             <span class="app-brand-logo demo">
               <span style="color:#666cff;">
                 <svg width="268" height="150" viewBox="0 0 38 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -41,23 +41,22 @@
                 </svg>
               </span>
             </span>
-            <span class="app-brand-text demo text-heading fw-semibold">Materialize</span>
+            <span class="app-brand-text demo text-heading fw-semibold">Sign In to Your Account</span>
           </a>
         </div>
         <!-- /Logo -->
 
         <div class="card-body mt-1">
-          <h4 class="mb-1">Welcome to Materialize! 👋</h4>
-          <p class="mb-5">Please sign-in to your account and start the adventure</p>
-
+          
           <form class="row g-4 form-save"  >
             <!-- Email input -->
             <div class="form-floating form-floating-outline">
-              <input type="text" id="name" name="name" class="form-control" placeholder="Username" value=""/>
-              <label for="Username">Username</label>
+              <input type="text" id="name" name="email" class="form-control" placeholder="Email" value=""/>
+              <label for="Email">Email</label>
             </div>
           
             <!-- Password input -->
+            
             <div class="form-floating form-floating-outline">
               <input type="password" id="password" name="password" class="form-control" placeholder="Password" value=""/>
               <label for="paswword">Password</label>

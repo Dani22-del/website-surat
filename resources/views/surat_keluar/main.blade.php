@@ -11,11 +11,20 @@
         <div class="card-datatable text-nowrap p-3">
             <div class="col-lg-3 col-sm-6 col-12 mb-4">
                 <div class="demo-inline-spacing">
+                   @php
+                        $level = Auth::user()->level_user;
+                    @endphp
+
+                    {{-- Hanya tampilkan tombol “Tambah” untuk admin_devisi --}}
+                    @if($level === 'admin_devisi')
                     <div class="btn-group">
                         <button type="button" onclick="addSuratKeluar()" class="btn btn-sm btn-primary">
-                            <i class="mdi mdi-plus-box-multiple-outline me-1"></i> Tambah
+                        <i class="mdi mdi-plus-box-multiple-outline me-1"></i> Tambah
                         </button>
                     </div>
+                    @endif
+
+                {{-- Hanya tampilkan tombol “Cek Kepala Arsip” untuk kepala_arsip --}}
                 </div>
             </div>
             <div style="overflow-x: auto">

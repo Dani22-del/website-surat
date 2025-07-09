@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('dashboard_admin.main');
-// });
+Route::get('/welcome', function () {
+    return view('welcome');
+});
 
 Route::group(['prefix' => 'login'], function () {
     Route::get('/', [LoginController::class, 'login'])->name('login')->middleware('guest');
@@ -54,7 +54,17 @@ Route::group(['middleware' => 'cekstatus'], function () {
         Route::post('/cek-kepala-arsip-surat-keluar', [SuratKeluarController::class, 'cekKepalaArsip'])->name('cek-kepala-surat-keluar');
         Route::post('/cek-direktur-surat-keluar', [SuratKeluarController::class, 'cekDirektur'])->name('cek-direktur-surat-keluar');
         Route::get('/laporan-surat-keluar', [SuratKeluarController::class, 'laporan'])->name('laporan-surat-keluar');
+        Route::get('/laporan-surat-disimpan', [SuratKeluarController::class, 'suratDisimpan'])->name('laporan-surat-disimpan');
+        Route::get('/cetak-laporan', [SuratKeluarController::class, 'cetakLaporan'])->name('cetak-laporan');
+       Route::get('/cetak-per-surat/{id}', [SuratKeluarController::class, 'cetakSuratKeluar'])
+     ->name('cetak-per-surat-keluar');
         Route::post('/store-surat-keluar', [SuratKeluarController::class, 'store'])->name('store-surat-keluar');
         Route::post('/delete-surat-keluar', [SuratKeluarController::class, 'destroy'])->name('destroy-surat-keluar');
+    });
+    Route::group(['prefix' => 'surat-masuk'], function () {
+        Route::get('/', [SuratKeluarController::class, 'suratMasuk'])->name('data-surat-masuk');
+         Route::get('/cetak-laporan-surat-masuk', [SuratKeluarController::class, 'cetakLaporanSuratMasuk'])->name('cetak-laporan-surat-masuk');
+         Route::get('/cetak-per-surat-masuk/{id}', [SuratKeluarController::class, 'cetakSuratMasuk'])
+     ->name('cetak-per-surat-masuk');
     });
 });

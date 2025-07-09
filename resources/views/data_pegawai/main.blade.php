@@ -26,7 +26,6 @@
                             <th>NIP</th>
                             <th>Nama Lengkap</th>
                             <th>Level</th>
-                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -80,13 +79,6 @@
             {
                 data: 'level_user',
                 name: 'level_user',
-                render: function(data, type, row) {
-                    return '<p style="color:black">' + data + '</p>';
-                }
-            },
-            {
-                data: 'status',
-                name: 'status',
                 render: function(data, type, row) {
                     return '<p style="color:black">' + data + '</p>';
                 }

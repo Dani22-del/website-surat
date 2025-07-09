@@ -1,7 +1,7 @@
 
-<div class="card p-3"  tabindex="-1"  aria-hidden="false" aria-modal="true">
+<div class="card p-3"  id="cekDirektur" tabindex="-1"  aria-hidden="false" aria-modal="true">
   <div class="card-header flex text-center align-items-center justify-content-center mb-4">
-    <h5 class="mb-0">Validasi Surat Keluar</h5>
+    <h5 class="mb-0">Validasi Direktur</h5>
   </div>
   <div class="card-body">
     {{-- Judul Informasi Surat --}}
@@ -53,12 +53,16 @@
         <tr>
           <th scope="row">Catatan</th>
           <td>
-            <textarea
+            @if ($data->status_direktur == 'Approved' || $data->status_direktur == 'Reject')
+                   <textarea
               name="catatan_diektur"
               class="form-control"
               rows="3"
+              disabled
               placeholder="Berikan catatan untuk surat ini jika diperlukan"
             >{{ old('catatan_direktur', $data->catatan_direktur ?? '') }}</textarea>
+            @endif
+         
           </td>
         </tr>
 
@@ -66,31 +70,40 @@
         <tr>
           <th scope="row">Tindakan</th>
           <td>
-           <select name="tindakan" id="tindakan" class="select2 form-select">
-            <!-- placeholder: hidden sehingga tidak muncul di dropdown -->
-            <option value="" disabled selected hidden>-- Pilih Tindakan --</option>
+           <select name="tindakan" id="tindakan" class="select2 form-select"
+    @if(in_array($data->status_direktur, ['Approved','Reject']))
+        disabled
+    @endif
+>
+    <option value="" disabled selected hidden>-- Pilih Tindakan --</option>
+    <option value="Revisi"
+        {{ old('tindakan', $data->status_direktur) == 'Revisi' ? 'selected' : '' }}>
+        Koreksi Kembali
+    </option>
+    <option value="Approved"
+        {{ old('tindakan', $data->status_direktur) == 'Approved' ? 'selected' : '' }}>
+        Approved
+    </option>
+    <option value="Reject"
+        {{ old('tindakan', $data->status_direktur) == 'Reject' ? 'selected' : '' }}>
+        Reject
+    </option>
+</select>
 
-            <!-- opsi sebenarnya -->
-            <option value="Revisi"
-              {{ old('tindakan', $data->status_direktur ?? '') == 'Revisi' ? 'selected' : '' }}>
-              Koreksi Kembali
-            </option>
-            <option value="Approved"
-              {{ old('tindakan', $data->status_direktur ?? '') == 'Approved' ? 'selected' : '' }}>
-              Approved
-            </option>
-          </select>
+           
 
           </td>
         </tr>
       </tbody>
     </table>
-           
-          <div class="col-12 text-end">
-            <button type="reset" class="btn btn-outline-secondary btn-cancel" ><i class="ri-arrow-left-s-line me-1"></i> Cancel</button>
+          
+            <div class="col-12 text-end">
+               @if($data->status_direktur == 'Revisi' || $data->status_direktur == 'Pending')
             <button type="button" class="btn btn-success me-sm-3 btn-submit me-1"><i
                     class="mdi mdi-check-all me-1"></i>Submit</button>
-        </div>
+            @endif
+              <button type="reset" class="btn btn-outline-secondary btn-cancel" ><i class="ri-arrow-left-s-line me-1"></i> Kembali</button>
+            </div>
     </form>
   </div>
 </div>
@@ -122,7 +135,7 @@
             $('.form-save').validate(data, 'has-error');
             if (data.status == 'success') {
                 toastr.success(data.message);
-                $('#addDataSuratKeluar').hide(); // Show the modal
+                $('#cekDirektur').hide(); // Show the modal
                 $('.main-page').show();
                 $('#datagrid').DataTable().ajax.reload();
             } else if (data.status == 'error') {

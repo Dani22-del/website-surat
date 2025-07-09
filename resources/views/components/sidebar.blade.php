@@ -10,27 +10,35 @@
         </a>
       </li>
       <li class="menu-item">
-        <a href="" class="menu-link">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons ri-mail-open-line"></i>
           <div data-i18n="Surat Masuk">Surat Masuk</div>
         </a>
-      </li>
+        <ul class="menu-sub">
+          <li class="menu-item {{ Route::is('data-surat-masuk') ? 'active' : '' }}">
+            <a href="{{ route('data-surat-masuk') }}" class="menu-link">
+              <div data-i18n="Laporan Surat Masuk">Laporan Surat Masuk</div>
+            </a>
+          </li>
+        </ul>
+     </li>
       <li class="menu-item">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons ri-file-copy-line"></i>
           <div data-i18n="Surat Keluar">Surat Keluar</div>
         </a>
         <ul class="menu-sub">
-          <li class="menu-item {{ Route::is('data-surat-keluar') ? 'active' : '' }}">
-            <a href="{{ route('data-surat-keluar') }}" class="menu-link">
-              <div data-i18n="Data Surat Keluar">Data Surat Keluar</div>
-            </a>
-          </li>
-          <li class="menu-item {{ Route::is('data-pegawai') ? 'active' : '' }}">
+           <li class="menu-item {{ Route::is('data-pegawai') ? 'active' : '' }}">
             <a href="{{ route('data-pegawai') }}" class="menu-link">
               <div data-i18n="Data Pegawai">Data Pegawai</div>
             </a>
           </li>
+          <li class="menu-item {{ Route::is('data-surat-keluar') ? 'active' : '' }}">
+            <a href="{{ route('data-surat-keluar') }}" class="menu-link">
+              <div data-i18n="Surat Divisi">Surat Divisi</div>
+            </a>
+          </li>
+         
           <li class="menu-item {{ Route::is('data-jenis-surat') ? 'active' : '' }}">
             <a href="{{ route('data-jenis-surat') }}" class="menu-link">
               <div data-i18n="Jenis Surat">Jenis Surat</div>
@@ -49,11 +57,18 @@
         </a>
       </li>
       <li class="menu-item">
-        <a href="" class="menu-link">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons ri-mail-open-line"></i>
           <div data-i18n="Surat Masuk">Surat Masuk</div>
         </a>
-      </li>
+        <ul class="menu-sub">
+          <li class="menu-item {{ Route::is('data-surat-masuk') ? 'active' : '' }}">
+            <a href="{{ route('data-surat-masuk') }}" class="menu-link">
+              <div data-i18n="Laporan Surat Masuk">Laporan Surat Masuk</div>
+            </a>
+          </li>
+        </ul>
+     </li>
       <li class="menu-item">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons ri-file-copy-line"></i>
@@ -62,7 +77,12 @@
         <ul class="menu-sub">
           <li class="menu-item {{ Route::is('data-surat-keluar') ? 'active' : '' }}">
             <a href="{{ route('data-surat-keluar') }}" class="menu-link">
-              <div data-i18n="Data Surat Keluar">Data Surat Keluar</div>
+              <div data-i18n="Surat Kepala Arsip">Surat Kepala Arsip</div>
+            </a>
+          </li>
+          <li class="menu-item {{ Route::is('laporan-surat-disimpan') ? 'active' : '' }}">
+            <a href="{{ route('laporan-surat-disimpan') }}" class="menu-link">
+              <div data-i18n="Surat Disimpan">Surat Disimpan</div>
             </a>
           </li>
           <li class="menu-item {{ Route::is('laporan-surat-keluar') ? 'active' : '' }}">
@@ -82,12 +102,19 @@
           <div data-i18n="Dashboards">Dashboards</div>
         </a>
       </li>
-      <li class="menu-item">
-        <a href="" class="menu-link">
+     <li class="menu-item">
+        <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons ri-mail-open-line"></i>
           <div data-i18n="Surat Masuk">Surat Masuk</div>
         </a>
-      </li>
+        <ul class="menu-sub">
+          <li class="menu-item {{ Route::is('data-surat-masuk') ? 'active' : '' }}">
+            <a href="{{ route('data-surat-masuk') }}" class="menu-link">
+              <div data-i18n="Laporan Surat Masuk">Laporan Surat Masuk</div>
+            </a>
+          </li>
+        </ul>
+     </li>
       <li class="menu-item">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
           <i class="menu-icon tf-icons ri-file-copy-line"></i>

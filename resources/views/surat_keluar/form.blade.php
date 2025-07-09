@@ -70,8 +70,47 @@
                         <span class="error invalid-feedback"></span>
                     </div>
             </div>
-           
-          <div class="col-12 text-end">
+            {{-- Hanya tampilkan kalau sedang edit --}}
+            @if(isset($data))
+            <div class="row g-3">
+                {{-- Catatan Kepala --}}
+                <div class="col-12 col-md-6">
+                <div class="form-floating">
+                    <input 
+                    type="text"
+                    class="form-control"
+                    id="catatan_kepala"
+                    name="catatan_kepala"
+                    placeholder="Catatan Kepala Arsip" 
+                    value="{{ $data->catatan_kepala }}"
+                    readonly
+                    >
+                    <label for="catatan_kepala">
+                    <i class="ri-user-line me-1"></i> Catatan Kepala Arsip
+                    </label>
+                </div>
+                </div>
+
+                {{-- Catatan Direktur --}}
+                <div class="col-12 col-md-6">
+                <div class="form-floating">
+                    <input 
+                    type="text"
+                    class="form-control"
+                    id="catatan_direktur"
+                    name="catatan_direktur"
+                    placeholder="Catatan Direktur" 
+                    value="{{ $data->catatan_direktur }}"
+                    readonly
+                    >
+                    <label for="catatan_direktur">
+                    <i class="ri-shield-user-line me-1"></i> Catatan Direktur
+                    </label>
+                </div>
+                </div>
+            </div>
+            @endif
+          <div class="col-12 text-end mt-3">
             <button type="reset" class="btn btn-outline-secondary btn-cancel" ><i class="ri-arrow-left-s-line me-1"></i> Cancel</button>
             <button type="button" class="btn btn-success me-sm-3 btn-submit me-1"><i
                     class="mdi mdi-check-all me-1"></i>Submit</button>

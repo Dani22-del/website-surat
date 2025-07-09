@@ -13,10 +13,10 @@ class LoginController extends Controller
        public function aksi_login(Request $request)
 {
     $credentials = $request->validate([
-        'name' => ['required'],
+        'email' => ['required'],
         'password' => ['required'],
     ], [
-        'name.required' => 'Username tidak sesuai.',
+        'email.required' => 'Email tidak sesuai.',
         'password.required' => 'Password tidak sesuai.',
     ]);
 
@@ -41,9 +41,9 @@ class LoginController extends Controller
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
 
-    return back()->withErrors([
-        'name' => 'The provided credentials do not match our records.',
-    ])->onlyInput('name');
+    // return back()->withErrors([
+    //     'name' => 'The provided credentials do not match our records.',
+    // ])->onlyInput('name');
 }
 
 

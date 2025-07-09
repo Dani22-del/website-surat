@@ -1,5 +1,5 @@
 
-<div class="card p-3"  tabindex="-1"  aria-hidden="false" aria-modal="true">
+<div class="card p-3" id="cekKepalaArsip"  tabindex="-1"  aria-hidden="false" aria-modal="true">
   <div class="card-header flex text-center align-items-center justify-content-center mb-4">
     <h5 class="mb-0">Validasi Surat Keluar</h5>
   </div>
@@ -122,7 +122,7 @@
             $('.form-save').validate(data, 'has-error');
             if (data.status == 'success') {
                 toastr.success(data.message);
-                $('#addDataSuratKeluar').hide(); // Show the modal
+                $('#cekKepalaArsip').hide(); // Show the modal
                 $('.main-page').show();
                 $('#datagrid').DataTable().ajax.reload();
             } else if (data.status == 'error') {

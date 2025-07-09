@@ -11,4 +11,14 @@ class SuratKeluar extends Model
     protected $table = 'surat_keluar';
     protected $primaryKey = 'id_surat_keluar';
     public $timestamp = true;
+
+    public function jenisSurat()
+    {
+      return $this->belongsTo(JenisSurat::class, 'jenis_surat_id');
+    }
+
+    public function user()
+{
+    return $this->belongsTo(User::class, 'user_id');
+}
 }

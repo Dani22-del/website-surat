@@ -23,7 +23,9 @@ class DataPegawaiController extends Controller
                     // 1) Ubah underscore jadi spasi + kapitalisasi tiap kata
                     $label = ucwords(str_replace('_', ' ', $row->level_user));
                     // alternatif: $label = Str::title(str_replace('_', ' ', $row->level_user));
-
+                    if ($row->level_user === 'admin_devisi') {
+                        $label = 'Admin Divisi';
+                    }
                     // 2) Pilih class badge berdasarkan nilai asli (underscore)
                     switch ($row->level_user) {
                         case 'admin_devisi':
@@ -81,7 +83,7 @@ class DataPegawaiController extends Controller
         try {
             // $data['gudang'] = MasterGudang::where('perusahaan_id', 1)->get();
             $data['statuses'] = [
-            'admin_devisi' => 'Admin Devisi',
+            'admin_devisi' => 'Admin Divisi',
             'kepala_arsip' => 'Kepala Arsip',
             'direktur'     => 'Direktur',
             'pegawai'      => 'Pegawai',
@@ -97,7 +99,7 @@ class DataPegawaiController extends Controller
     {
       try {
         $data['statuses'] = [
-            'admin_devisi' => 'Admin Devisi',
+            'admin_devisi' => 'Admin Divisi',
             'kepala_arsip' => 'Kepala Arsip',
             'direktur'     => 'Direktur',
             'pegawai'      => 'Pegawai',

@@ -37,7 +37,6 @@
                     id="password"
                     name="password"
                     class="form-control"
-                    placeholder="••••••••"
                     autocomplete="new-password"
                   />
                   <span class="input-group-text cursor-pointer">
@@ -85,21 +84,7 @@
                             <label for="level_user">Level User</label>
                         </div>
             </div>
-               <div class="col-12 col-md-6 mb-3">
-                        <small class="text-light fw-semibold d-block">Status</small>
-                        <div class="form-check form-check-success form-check-inline mt-2">
-                            <input class="form-check-input" type="radio" name="status" id="Aktif" @if ($data ? $data->status == 'Aktif' : null) @checked(true) @endif
-                                value="Aktif"
-                                 />
-                            <label class="form-check-label" for="Aktif">Aktif</label>
-                        </div>
-                        <div class="form-check form-check-danger form-check-inline">
-                            <input class="form-check-input" type="radio" name="status" id="Non-Aktif" @if ($data ? $data->status == 'Non-Aktif' : null) @checked(true) @endif
-                                value="Non-Aktif"
-                                 />
-                            <label class="form-check-label" for="Non-Aktif">Non-Aktif</label>
-                        </div>
-               </div>
+              
           <div class="col-12 text-end">
             <button type="reset" class="btn btn-outline-secondary btn-cancel" ><i class="ri-arrow-left-s-line me-1"></i> Cancel</button>
             <button type="button" class="btn btn-success me-sm-3 btn-submit me-1"><i
